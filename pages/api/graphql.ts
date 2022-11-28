@@ -1,14 +1,14 @@
-import { ApolloServer } from '@apollo/server';
-import { startServerAndCreateNextHandler } from '@as-integrations/next';
-import { makeExecutableSchema } from '@graphql-tools/schema';
-import { gql } from 'graphql-tag';
-import { buildContext, Context } from '../../shared/context/context';
+import { ApolloServer } from "@apollo/server";
+import { startServerAndCreateNextHandler } from "@as-integrations/next";
+import { makeExecutableSchema } from "@graphql-tools/schema";
+import { gql } from "graphql-tag";
+import { buildContext, Context } from "../../shared/context/context";
 
 const typeDefs = gql`
   type Query {
     users: [User!]!
     user(username: String): User
-    hello: [String!]
+    hello: String!
   }
   type User {
     name: String
@@ -17,8 +17,8 @@ const typeDefs = gql`
 `;
 
 const users = [
-  { name: 'Leeroy Jenkins', username: 'leeroy' },
-  { name: 'Foo Bar', username: 'foobar' },
+  { name: "Leeroy Jenkins", username: "leeroy" },
+  { name: "Foo Bar", username: "foobar" },
 ];
 
 const resolvers = {
@@ -26,12 +26,11 @@ const resolvers = {
     users() {
       return users;
     },
-    user(parent, { user }, ctx, info) {
-      console.log(ctx);
-      return users.find((user) => user.username === username);
+    user(_parent, args) {
+      return users.find((user) => user.username === args.username);
     },
-    hello(parent, args, ctx) {
-      return ctx.hello();
+    hello(_parent, _args, ctx: Context) {
+      return ctx.datasources.helloDataSource();
     },
   },
 };
@@ -39,7 +38,8 @@ const resolvers = {
 export const schema = makeExecutableSchema({ typeDefs, resolvers });
 
 const server = new ApolloServer<Context>({
-  schema,
+  resolvers,
+  typeDefs,
 });
 
 export default startServerAndCreateNextHandler(server, {
