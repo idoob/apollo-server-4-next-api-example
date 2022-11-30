@@ -2,7 +2,7 @@ import { ApolloServer } from "@apollo/server";
 import { startServerAndCreateNextHandler } from "@as-integrations/next";
 import { makeExecutableSchema } from "@graphql-tools/schema";
 import { gql } from "graphql-tag";
-import { buildContext, Context } from "../../shared/context/context";
+import { buildContext, Context } from "../../context";
 
 const typeDefs = gql`
   type Query {
@@ -38,8 +38,7 @@ const resolvers = {
 export const schema = makeExecutableSchema({ typeDefs, resolvers });
 
 const server = new ApolloServer<Context>({
-  resolvers,
-  typeDefs,
+  schema,
 });
 
 export default startServerAndCreateNextHandler(server, {

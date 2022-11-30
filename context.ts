@@ -4,20 +4,20 @@ import { NextApiHandler } from "next";
 // Example Context type
 export type Context = {
   user: string;
-  datasources: Datasources;
+  datasources: DataSources;
 };
 
-export type Datasources = {
+export type DataSources = {
   helloDataSource: () => string;
 };
 
 // Simple Function that builds datasources
-export const buildDatasources = async (): Promise<Datasources> => {
+const buildDataSources = async (): Promise<DataSources> => {
   
   // Do something asynchronous or synchronous to build datasources
   // ...
   return {
-    helloDataSource: () => "world",
+    helloDataSource: () => "hello world!",
   };
 };
 
@@ -31,7 +31,7 @@ export const buildContext: ContextFunction<
   // ...
 
   // Build datasources
-  const datasources = await buildDatasources();
+  const datasources = await buildDataSources();
   
   return {
     user: "some user",
